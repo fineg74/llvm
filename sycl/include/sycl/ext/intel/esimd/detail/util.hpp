@@ -188,6 +188,110 @@ T *accessorToPointer(AccessorTy Acc, OffsetTy Offset = 0) {
 }
 #endif // __ESIMD_FORCE_STATELESS_MEM
 
+constexpr bool isTargetPlatformDefined() {
+#if defined(__SYCL_TARGET_INTEL_X86_64__) ||                                   \
+    defined(__SYCL_TARGET_INTEL_GPU_BDW__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_SKL__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_KBL__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_CFL__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_APL__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_GLK__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_WHL__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_AML__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_CML__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_ICLLP__) ||                                \
+    defined(__SYCL_TARGET_INTEL_GPU_TGLLP__) ||                                \
+    defined(__SYCL_TARGET_INTEL_GPU_RKL__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_ADL_S__) ||                                \
+    defined(__SYCL_TARGET_INTEL_GPU_RPL_S__) ||                                \
+    defined(__SYCL_TARGET_INTEL_GPU_ADL_P__) ||                                \
+    defined(__SYCL_TARGET_INTEL_GPU_ADL_N__) ||                                \
+    defined(__SYCL_TARGET_INTEL_GPU_DG1__) ||                                  \
+    defined(__SYCL_TARGET_INTEL_GPU_ACM_G10__) ||                              \
+    defined(__SYCL_TARGET_INTEL_GPU_ACM_G11__) ||                              \
+    defined(__SYCL_TARGET_INTEL_GPU_ACM_G12__) ||                              \
+    defined(__SYCL_TARGET_INTEL_GPU_PVC__)
+  return true;
+#else
+  return false;
+#endif
+}
+constexpr bool isGEN8TargetPlatformDefined() {
+#if (__SYCL_TARGET_INTEL_GPU_BDW__ == 1)
+  return true;
+#else
+  return false;
+#endif
+}
+
+constexpr bool isGEN9TargetPlatformDefined() {
+#if (__SYCL_TARGET_INTEL_GPU_SKL__ == 1 ||                                     \
+     __SYCL_TARGET_INTEL_GPU_KBL__ == 1 ||                                     \
+     __SYCL_TARGET_INTEL_GPU_CFL__ == 1 ||                                     \
+     __SYCL_TARGET_INTEL_GPU_APL__ == 1 ||                                     \
+     __SYCL_TARGET_INTEL_GPU_GLK__ == 1 ||                                     \
+     __SYCL_TARGET_INTEL_GPU_WHL__ == 1 ||                                     \
+     __SYCL_TARGET_INTEL_GPU_AML__ == 1 || __SYCL_TARGET_INTEL_GPU_CML__ == 1)
+  return true;
+#else
+  return false;
+#endif
+}
+
+constexpr bool isGEN11TargetPlatformDefined() {
+#if (__SYCL_TARGET_INTEL_GPU_ICLLP__ == 1)
+  return true;
+#else
+  return false;
+#endif
+}
+
+constexpr bool isGEN12TargetPlatformDefined() {
+#if (__SYCL_TARGET_INTEL_GPU_TGLLP__ == 1 ||                                   \
+     __SYCL_TARGET_INTEL_GPU_RKL__ == 1 ||                                     \
+     __SYCL_TARGET_INTEL_GPU_ADL_S__ == 1 ||                                   \
+     __SYCL_TARGET_INTEL_GPU_ADL_P__ == 1 ||                                   \
+     __SYCL_TARGET_INTEL_GPU_ADL_N__ == 1)
+  return true;
+#else
+  return false;
+#endif
+}
+
+constexpr bool isGEN13TargetPlatformDefined() {
+#if (__SYCL_TARGET_INTEL_GPU_DG1__ == 1)
+  return true;
+#else
+  return false;
+#endif
+}
+
+constexpr bool isDG1TargetPlatformDefined() {
+#if (__SYCL_TARGET_INTEL_GPU_RPL_S__ == 1)
+  return true;
+#else
+  return false;
+#endif
+}
+
+constexpr bool isDG2TargetPlatformDefined() {
+#if (__SYCL_TARGET_INTEL_GPU_ACM_G10__ == 1 ||                                 \
+     __SYCL_TARGET_INTEL_GPU_ACM_G11__ == 1 ||                                 \
+     __SYCL_TARGET_INTEL_GPU_ACM_G12__ == 1)
+  return true;
+#else
+  return false;
+#endif
+}
+
+constexpr bool isPVCTargetPlatformDefined() {
+#if (__SYCL_TARGET_INTEL_GPU_PVC__ == 1)
+  return true;
+#else
+  return false;
+#endif
+}
+
 } // namespace ext::intel::esimd::detail
 } // __SYCL_INLINE_VER_NAMESPACE(_V1)
 } // namespace sycl

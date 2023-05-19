@@ -949,6 +949,11 @@ lsc_block_load(const T *p, __ESIMD_NS::simd_mask<1> pred = 1,
   constexpr auto _Transposed = detail::lsc_data_order::transpose;
   constexpr int N = 1;
 
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(FactoredNElts * sizeof(LoadElemT) <= 256,
+                  "Unsupported architecture.");
+  }
+
   __ESIMD_NS::simd<uintptr_t, N> Addrs = reinterpret_cast<uintptr_t>(p);
 
   __ESIMD_NS::simd<LoadElemT, FactoredNElts> Result =
@@ -2214,7 +2219,7 @@ __ESIMD_API void lsc_store_2d(T *Ptr, unsigned SurfaceWidth,
     Raw2D.template select<BlockHeight, 1, BlockWidth, 1>(0, 0) = Data2D;
   }
 
-  __ESIMD_NS::simd_mask<BlockHeight * Pitch> pred = 1;
+  __ESIMD_NS::simd_mask<BlockHeight *Pitch> pred = 1;
   __esimd_lsc_store2d_stateless<T, L1H, L3H, DS, _Transposed, 1u, BlockWidth,
                                 BlockHeight, false, BlockHeight * Pitch>(
       pred.data(), surf_addr, SurfaceWidth, SurfaceHeight, SurfacePitch, X, Y,
