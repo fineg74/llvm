@@ -855,7 +855,11 @@ fbh(simd_view<BaseTy, RegionTy> src) {
 template <typename T1, typename T2, typename T3, typename T4, int N,
           class Sat = saturation_off_tag>
 __ESIMD_API std::enable_if_t<
-    detail::is_dword_type<T1>::value && detail::is_dword_type<T2>::value &&
+    (!__ESIMD_DNS::isTargetPlatformDefined() ||
+     (!__ESIMD_DNS::isGEN8TargetPlatformDefined() &&
+      !__ESIMD_DNS::isGEN9TargetPlatformDefined() &&
+      !__ESIMD_DNS::isGEN11TargetPlatformDefined())) &&
+        detail::is_dword_type<T1>::value && detail::is_dword_type<T2>::value &&
         detail::is_dword_type<T3>::value && detail::is_dword_type<T4>::value,
     simd<T1, N>>
 dp4a(simd<T2, N> src0, simd<T3, N> src1, simd<T4, N> src2, Sat sat = {}) {

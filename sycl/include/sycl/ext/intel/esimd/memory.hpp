@@ -1846,8 +1846,10 @@ __ESIMD_API simd<Tx, N> slm_atomic_update(simd<uint32_t, N> offsets,
 /// @return the linearized 2D block data read from surface.
 ///
 template <typename T, int m, int N, typename AccessorTy, unsigned plane = 0>
-__ESIMD_API simd<T, m * N> media_block_load(AccessorTy acc, unsigned x,
-                                            unsigned y) {
+__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                                 isGEN9TargetPlatformDefined(),
+                             simd<T, m * N>>
+media_block_load(AccessorTy acc, unsigned x, unsigned y) {
   constexpr unsigned Width = N * sizeof(T);
   static_assert(Width * m <= 256u,
                 "data does not fit into a single dataport transaction");
@@ -1887,8 +1889,9 @@ __ESIMD_API simd<T, m * N> media_block_load(AccessorTy acc, unsigned x,
 /// @param vals is the linearized 2D block data to be written to surface.
 ///
 template <typename T, int m, int N, typename AccessorTy, unsigned plane = 0>
-__ESIMD_API void media_block_store(AccessorTy acc, unsigned x, unsigned y,
-                                   simd<T, m * N> vals) {
+__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                             __ESIMD_DNS::isGEN9TargetPlatformDefined()>
+media_block_store(AccessorTy acc, unsigned x, unsigned y, simd<T, m * N> vals) {
   constexpr unsigned Width = N * sizeof(T);
   static_assert(Width * m <= 256u,
                 "data does not fit into a single dataport transaction");

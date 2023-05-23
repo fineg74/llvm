@@ -280,9 +280,11 @@ template <
     dpas_argument_type BPrecision = detail::dpas_precision_from_type<BT>(),
     dpas_argument_type APrecision = detail::dpas_precision_from_type<AT>(),
     int N, int BN, int AN>
-__ESIMD_NS::simd<T, N> dpasw(__ESIMD_NS::simd<T, N> C,
-                             __ESIMD_NS::simd<BT, BN> B,
-                             __ESIMD_NS::simd<AT, AN> A) {
+__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                                 __ESIMD_DNS::isDG2TargetPlatformDefined(),
+                             __ESIMD_NS::simd<T, N>>
+dpasw(__ESIMD_NS::simd<T, N> C, __ESIMD_NS::simd<BT, BN> B,
+      __ESIMD_NS::simd<AT, AN> A) {
 
   constexpr bool IsDPASW = true;
   (void)detail::verify_parameters_and_deduce_exec_size<
@@ -312,7 +314,10 @@ template <
     dpas_argument_type BPrecision = detail::dpas_precision_from_type<BT>(),
     dpas_argument_type APrecision = detail::dpas_precision_from_type<AT>(),
     int BN, int AN>
-auto dpasw(__ESIMD_NS::simd<BT, BN> B, __ESIMD_NS::simd<AT, AN> A) {
+__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                                 __ESIMD_DNS::isDG2TargetPlatformDefined(),
+                             auto>
+dpasw(__ESIMD_NS::simd<BT, BN> B, __ESIMD_NS::simd<AT, AN> A) {
 
   constexpr bool IsDPASW = true;
   constexpr int ExecutionSize = detail::verify_parameters_and_deduce_exec_size<
