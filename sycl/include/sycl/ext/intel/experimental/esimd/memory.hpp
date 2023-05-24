@@ -400,8 +400,8 @@ constexpr void check_lsc_atomic() {
                   "wrong number of operands");
   }
   if constexpr (Op == __ESIMD_NS::native::lsc::atomic_op::fcmpxchg) {
-    static_assert(__ESIMD_DNS::is_type<T, float, sycl::half, double>(),
-                  "float, double or sycl::half type is expected");
+    static_assert(__ESIMD_DNS::is_type<T, float, sycl::half>(),
+                  "float or sycl::half type is expected");
   } else {
     __ESIMD_DNS::check_atomic<__ESIMD_DNS::to_atomic_op<Op>(), T, N, NumSrc>();
   }
