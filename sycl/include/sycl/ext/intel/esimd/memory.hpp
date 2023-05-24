@@ -1847,7 +1847,7 @@ __ESIMD_API simd<Tx, N> slm_atomic_update(simd<uint32_t, N> offsets,
 ///
 template <typename T, int m, int N, typename AccessorTy, unsigned plane = 0>
 __ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                                 isGEN9TargetPlatformDefined(),
+                                 __ESIMD_DNS::isGEN9TargetPlatformDefined(),
                              simd<T, m * N>>
 media_block_load(AccessorTy acc, unsigned x, unsigned y) {
   constexpr unsigned Width = N * sizeof(T);

@@ -195,8 +195,7 @@ auto accessorToPointer(AccessorTy Acc, OffsetTy Offset = 0) {
 #endif // __ESIMD_FORCE_STATELESS_MEM
 
 constexpr bool isTargetPlatformDefined() {
-#if defined(__SYCL_TARGET_INTEL_X86_64__) ||                                   \
-    defined(__SYCL_TARGET_INTEL_GPU_BDW__) ||                                  \
+#if defined(__SYCL_TARGET_INTEL_GPU_BDW__) ||                                  \
     defined(__SYCL_TARGET_INTEL_GPU_SKL__) ||                                  \
     defined(__SYCL_TARGET_INTEL_GPU_KBL__) ||                                  \
     defined(__SYCL_TARGET_INTEL_GPU_CFL__) ||                                  \
