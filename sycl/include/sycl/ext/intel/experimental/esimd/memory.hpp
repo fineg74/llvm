@@ -495,6 +495,9 @@ lsc_slm_gather(__ESIMD_NS::simd<uint32_t, N> offsets,
   constexpr detail::lsc_vector_size _VS = detail::to_lsc_vector_size<NElts>();
   constexpr auto _Transposed = detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<MsgT, N *NElts> Tmp =
       __esimd_lsc_load_slm<MsgT, cache_hint::none, cache_hint::none,
                            _AddressScale, _ImmOffset, _DS, _VS, _Transposed, N>(
@@ -538,6 +541,9 @@ lsc_slm_gather(__ESIMD_NS::simd<uint32_t, N> offsets,
   constexpr detail::lsc_data_order _Transposed =
       detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<MsgT, N *NElts> OldValuesExpanded =
       detail::lsc_format_input<MsgT>(old_values);
   __ESIMD_NS::simd<MsgT, N *NElts> Result =
@@ -577,7 +583,9 @@ lsc_slm_block_load(uint32_t offset, __ESIMD_NS::simd_mask<1> pred = 1) {
   static_assert(FDS == lsc_data_size::u32 || FDS == lsc_data_size::u64,
                 "Transposed load is supported only for data size u32 or u64");
   constexpr detail::lsc_vector_size VS = detail::to_lsc_vector_size<NElts>();
-
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
   constexpr auto Transposed = detail::lsc_data_order::transpose;
   constexpr int N = 1;
   __ESIMD_NS::simd<uint32_t, N> offsets = offset;
@@ -620,6 +628,9 @@ lsc_slm_block_load(uint32_t offset, __ESIMD_NS::simd_mask<1> pred,
   constexpr detail::lsc_vector_size VS = detail::to_lsc_vector_size<NElts>();
   constexpr auto Transposed = detail::lsc_data_order::transpose;
   constexpr int N = 1;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<uint32_t, N> offsets = offset;
   return __esimd_lsc_load_merge_slm<T, cache_hint::none, cache_hint::none,
                                     AddressScale, ImmOffset, FDS, VS,
@@ -666,6 +677,9 @@ lsc_gather(const T *p, __ESIMD_NS::simd<Toffset, N> offsets,
   constexpr detail::lsc_vector_size _VS = detail::to_lsc_vector_size<NElts>();
   constexpr auto _Transposed = detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<uintptr_t, N> addrs = reinterpret_cast<uintptr_t>(p);
   addrs += convert<uintptr_t>(offsets);
   __ESIMD_NS::simd<MsgT, N *NElts> Tmp =
@@ -717,6 +731,9 @@ lsc_gather(const T *p, __ESIMD_NS::simd<Toffset, N> offsets,
   constexpr detail::lsc_vector_size _VS = detail::to_lsc_vector_size<NElts>();
   constexpr auto _Transposed = detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<uintptr_t, N> Addrs = reinterpret_cast<uintptr_t>(p);
   Addrs += convert<uintptr_t>(offsets);
   __ESIMD_NS::simd<MsgT, N *NElts> OldValuesExpanded =
@@ -829,6 +846,9 @@ lsc_gather(AccessorTy acc, __ESIMD_NS::simd<uint32_t, N> offsets,
   constexpr detail::lsc_data_order _Transposed =
       detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   auto si = __ESIMD_NS::get_surface_index(acc);
   __ESIMD_NS::simd<MsgT, N *NElts> Tmp =
       __esimd_lsc_load_bti<MsgT, L1H, L3H, _AddressScale, _ImmOffset, _DS, _VS,
@@ -884,6 +904,9 @@ lsc_gather(AccessorTy acc, __ESIMD_NS::simd<uint32_t, N> offsets,
   constexpr detail::lsc_vector_size _VS = detail::to_lsc_vector_size<NElts>();
   constexpr auto _Transposed = detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   auto SI = __ESIMD_NS::get_surface_index(acc);
   __ESIMD_NS::simd<MsgT, N *NElts> OldValuesExpanded =
       detail::lsc_format_input<MsgT>(old_values);
@@ -994,8 +1017,7 @@ lsc_block_load(const T *p, __ESIMD_NS::simd_mask<1> pred = 1,
   constexpr int N = 1;
 
   if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
-    static_assert(FactoredNElts * sizeof(LoadElemT) <= 256,
-                  "Unsupported architecture.");
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
   }
 
   __ESIMD_NS::simd<uintptr_t, N> Addrs = reinterpret_cast<uintptr_t>(p);
@@ -1143,6 +1165,10 @@ lsc_block_load(const T *p, __ESIMD_NS::simd_mask<1> pred,
       std::conditional_t<SmallIntFactor == 1, T,
                          std::conditional_t<Use64BitData, uint64_t, uint32_t>>>;
 
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
+
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
 
@@ -1254,6 +1280,10 @@ lsc_block_load(AccessorTy acc, uint32_t offset,
   using LoadElemT = __ESIMD_DNS::__raw_t<
       std::conditional_t<SmallIntFactor == 1, T,
                          std::conditional_t<Use64BitData, uint64_t, uint32_t>>>;
+
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
 
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
@@ -1411,6 +1441,9 @@ lsc_block_load(AccessorTy acc, uint32_t offset, __ESIMD_NS::simd_mask<1> pred,
   using LoadElemT = __ESIMD_DNS::__raw_t<
       std::conditional_t<SmallIntFactor == 1, T,
                          std::conditional_t<Use64BitData, uint64_t, uint32_t>>>;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
   constexpr auto _VS = detail::to_lsc_vector_size<FactoredNElts>();
@@ -1466,6 +1499,9 @@ lsc_prefetch(const T *p, __ESIMD_NS::simd<Toffset, N> offsets,
   constexpr detail::lsc_data_order _Transposed =
       detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * N * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<uintptr_t, N> addrs = reinterpret_cast<uintptr_t>(p);
   addrs += convert<uintptr_t>(offsets);
   __esimd_lsc_prefetch_stateless<MsgT, L1H, L3H, _AddressScale, _ImmOffset, _DS,
@@ -1533,6 +1569,9 @@ lsc_prefetch(const T *p) {
       detail::lsc_data_order::transpose;
   constexpr int N = 1;
   __ESIMD_NS::simd_mask<N> pred = 1;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
 
   __ESIMD_NS::simd<uintptr_t, N> addrs = reinterpret_cast<uintptr_t>(p);
   __esimd_lsc_prefetch_stateless<T, L1H, L3H, _AddressScale, _ImmOffset, _DS,
@@ -1582,6 +1621,9 @@ lsc_prefetch(AccessorTy acc, __ESIMD_NS::simd<uint32_t, N> offsets,
   constexpr detail::lsc_data_order _Transposed =
       detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   auto si = __ESIMD_NS::get_surface_index(acc);
   __esimd_lsc_prefetch_bti<MsgT, L1H, L3H, _AddressScale, _ImmOffset, _DS, _VS,
                            _Transposed, N>(pred.data(), offsets.data(), si);
@@ -1628,6 +1670,9 @@ lsc_prefetch(AccessorTy acc, uint32_t offset) {
   constexpr detail::lsc_vector_size _VS = detail::to_lsc_vector_size<NElts>();
   constexpr detail::lsc_data_order _Transposed =
       detail::lsc_data_order::transpose;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
   constexpr int N = 1;
   __ESIMD_NS::simd_mask<N> pred = 1;
   __ESIMD_NS::simd<uint32_t, N> offsets = offset;
@@ -1670,6 +1715,9 @@ lsc_slm_scatter(__ESIMD_NS::simd<uint32_t, N> offsets,
       detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
   using CstT = typename detail::lsc_bitcast_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<MsgT, N *NElts> Tmp = vals.template bit_cast_view<CstT>();
   __esimd_lsc_store_slm<MsgT, cache_hint::none, cache_hint::none, _AddressScale,
                         _ImmOffset, _DS, _VS, _Transposed, N>(
@@ -1704,6 +1752,9 @@ lsc_slm_block_store(uint32_t offset, __ESIMD_NS::simd<T, NElts> vals) {
   constexpr detail::lsc_data_order _Transposed =
       detail::lsc_data_order::transpose;
   constexpr int N = 1;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd_mask<N> pred = 1;
   __ESIMD_NS::simd<uint32_t, N> offsets = offset;
   __esimd_lsc_store_slm<T, cache_hint::none, cache_hint::none, _AddressScale,
@@ -1751,6 +1802,9 @@ lsc_scatter(T *p, __ESIMD_NS::simd<Toffset, N> offsets,
       detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
   using _CstT = typename detail::lsc_bitcast_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<MsgT, N *NElts> Tmp = vals.template bit_cast_view<_CstT>();
   __ESIMD_NS::simd<uintptr_t, N> addrs = reinterpret_cast<uintptr_t>(p);
   addrs += convert<uintptr_t>(offsets);
@@ -1831,6 +1885,9 @@ lsc_scatter(AccessorTy acc, __ESIMD_NS::simd<uint32_t, N> offsets,
       detail::lsc_data_order::nontranspose;
   using MsgT = typename detail::lsc_expand_type<T>::type;
   using _CstT = typename detail::lsc_bitcast_type<T>::type;
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N * NElts * sizeof(MsgT) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<MsgT, N *NElts> Tmp = vals.template bit_cast_view<_CstT>();
   auto si = __ESIMD_NS::get_surface_index(acc);
   __esimd_lsc_store_bti<MsgT, L1H, L3H, _AddressScale, _ImmOffset, _DS, _VS,
@@ -1900,7 +1957,9 @@ lsc_block_store(T *p, __ESIMD_NS::simd<T, NElts> vals,
       detail::lsc_data_order::transpose;
   constexpr int N = 1;
   __ESIMD_NS::simd<uintptr_t, N> Addrs = reinterpret_cast<uintptr_t>(p);
-
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
   constexpr int SmallIntFactor32Bit =
       (_DS == lsc_data_size::u16) ? 2 : (_DS == lsc_data_size::u8 ? 4 : 1);
   static_assert(NElts > 0 && NElts % SmallIntFactor32Bit == 0,
@@ -2046,7 +2105,9 @@ lsc_block_store(AccessorTy acc, uint32_t offset,
   constexpr detail::lsc_data_order _Transposed =
       detail::lsc_data_order::transpose;
   constexpr int N = 1;
-
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(NElts * sizeof(T) <= 256, "Unsupported architecture.");
+  }
   __ESIMD_NS::simd<uint32_t, N> Offsets = offset;
   auto si = __ESIMD_NS::get_surface_index(acc);
 
@@ -2886,6 +2947,9 @@ lsc_slm_atomic_update(__ESIMD_NS::simd<uint32_t, N> offsets,
   constexpr __ESIMD_NS::native::lsc::atomic_op _Op =
       __ESIMD_DNS::to_lsc_atomic_op<Op>();
   __ESIMD_EDNS::check_lsc_atomic<_Op, T, N, 0>();
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N <= 16, "Unsupported architecture.");
+  }
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
   constexpr lsc_data_size _DS =
@@ -2933,6 +2997,9 @@ lsc_slm_atomic_update(__ESIMD_NS::simd<uint32_t, N> offsets,
   constexpr __ESIMD_NS::native::lsc::atomic_op _Op =
       __ESIMD_DNS::to_lsc_atomic_op<Op>();
   __ESIMD_EDNS::check_lsc_atomic<_Op, T, N, 1>();
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N <= 16, "Unsupported architecture.");
+  }
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
   constexpr lsc_data_size _DS =
@@ -2975,13 +3042,17 @@ lsc_slm_atomic_update(__ESIMD_NS::simd<uint32_t, N> offsets,
                       __ESIMD_NS::simd<T, N> src0, __ESIMD_NS::simd<T, N> src1,
                       __ESIMD_NS::simd_mask<N> pred) {
   static_assert(sizeof(T) == 2 || sizeof(T) == 4 ||
-                    (Op == __ESIMD_NS::atomic_op::cmpxchg && sizeof(T) == 8),
+                    (Op == __ESIMD_NS::atomic_op::cmpxchg && sizeof(T) == 8 &&
+                     !__ESIMD_DNS::isDG2TargetPlatformDefined()),
                 "Unsupported data type");
   detail::check_lsc_vector_size<1>();
   detail::check_lsc_data_size<T, DS>();
   constexpr __ESIMD_NS::native::lsc::atomic_op _Op =
       __ESIMD_DNS::to_lsc_atomic_op<Op>();
   __ESIMD_EDNS::check_lsc_atomic<_Op, T, N, 2>();
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N <= 16, "Unsupported architecture.");
+  }
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
   constexpr lsc_data_size _DS =
@@ -3033,6 +3104,9 @@ lsc_atomic_update(T *p, __ESIMD_NS::simd<Toffset, N> offsets,
   constexpr __ESIMD_NS::native::lsc::atomic_op _Op =
       __ESIMD_DNS::to_lsc_atomic_op<Op>();
   __ESIMD_EDNS::check_lsc_atomic<_Op, T, N, 0>();
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N <= 16, "Unsupported architecture.");
+  }
   detail::check_lsc_cache_hint<detail::lsc_action::atomic, L1H, L3H>();
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
@@ -3117,6 +3191,9 @@ lsc_atomic_update(T *p, __ESIMD_NS::simd<Toffset, N> offsets,
   constexpr __ESIMD_NS::native::lsc::atomic_op _Op =
       __ESIMD_DNS::to_lsc_atomic_op<Op>();
   __ESIMD_EDNS::check_lsc_atomic<_Op, T, N, 1>();
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N <= 16, "Unsupported architecture.");
+  }
   detail::check_lsc_cache_hint<detail::lsc_action::atomic, L1H, L3H>();
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
@@ -3209,6 +3286,9 @@ lsc_atomic_update(T *p, __ESIMD_NS::simd<Toffset, N> offsets,
   constexpr __ESIMD_NS::native::lsc::atomic_op _Op =
       __ESIMD_DNS::to_lsc_atomic_op<Op>();
   __ESIMD_EDNS::check_lsc_atomic<_Op, T, N, 2>();
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N <= 16, "Unsupported architecture.");
+  }
   detail::check_lsc_cache_hint<detail::lsc_action::atomic, L1H, L3H>();
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
@@ -3305,6 +3385,9 @@ lsc_atomic_update(AccessorTy acc, __ESIMD_NS::simd<Toffset, N> offsets,
   constexpr __ESIMD_NS::native::lsc::atomic_op _Op =
       __ESIMD_DNS::to_lsc_atomic_op<Op>();
   __ESIMD_EDNS::check_lsc_atomic<_Op, T, N, 0>();
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N <= 16, "Unsupported architecture.");
+  }
   detail::check_lsc_cache_hint<detail::lsc_action::atomic, L1H, L3H>();
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
@@ -3364,6 +3447,9 @@ lsc_atomic_update(AccessorTy acc, __ESIMD_NS::simd<Toffset, N> offsets,
   constexpr __ESIMD_NS::native::lsc::atomic_op _Op =
       __ESIMD_DNS::to_lsc_atomic_op<Op>();
   __ESIMD_EDNS::check_lsc_atomic<_Op, T, N, 1>();
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N <= 16, "Unsupported architecture.");
+  }
   detail::check_lsc_cache_hint<detail::lsc_action::atomic, L1H, L3H>();
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
@@ -3425,6 +3511,9 @@ lsc_atomic_update(AccessorTy acc, __ESIMD_NS::simd<Toffset, N> offsets,
   constexpr __ESIMD_NS::native::lsc::atomic_op _Op =
       __ESIMD_DNS::to_lsc_atomic_op<Op>();
   __ESIMD_EDNS::check_lsc_atomic<_Op, T, N, 2>();
+  if constexpr (__ESIMD_DNS::isDG2TargetPlatformDefined()) {
+    static_assert(N <= 16, "Unsupported architecture.");
+  }
   detail::check_lsc_cache_hint<detail::lsc_action::atomic, L1H, L3H>();
   constexpr uint16_t _AddressScale = 1;
   constexpr int _ImmOffset = 0;
