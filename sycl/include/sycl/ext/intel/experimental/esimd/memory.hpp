@@ -268,8 +268,8 @@ __ESIMD_API
 ///
 /// @param id  - named barrier id
 __ESIMD_API
-std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                 __ESIMD_DNS::isPVCTargetPlatformDefined()>
+std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+               __ESIMD_DNS::isPVCTargetPlatformDefined()>
 named_barrier_wait(uint8_t id) {
   __esimd_nbarrier(0 /*wait*/, id, 0 /*thread count*/);
 }
@@ -279,8 +279,8 @@ named_barrier_wait(uint8_t id) {
 ///
 /// @tparam NbarCount  - number of named barriers
 template <uint8_t NbarCount>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             __ESIMD_DNS::isPVCTargetPlatformDefined()>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           __ESIMD_DNS::isPVCTargetPlatformDefined()>
 named_barrier_init() {
   __esimd_nbarrier_init(NbarCount);
 }
@@ -297,8 +297,8 @@ named_barrier_init() {
 /// @param num_producers  - number of producers
 ///
 /// @param num_consumers  - number of consumers
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             __ESIMD_DNS::isPVCTargetPlatformDefined()>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           __ESIMD_DNS::isPVCTargetPlatformDefined()>
 named_barrier_signal(uint8_t barrier_id, uint8_t producer_consumer_mode,
                      uint32_t num_producers, uint32_t num_consumers) {
   constexpr uint32_t gateway = 3;
@@ -749,10 +749,7 @@ template <
     typename T, int NElts = 1, lsc_data_size DS = lsc_data_size::default_size,
     cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none, int N,
     typename Toffset, typename RegionTy = __ESIMD_NS::region1d_t<Toffset, N, 1>>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                                 (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                                  __ESIMD_DNS::isDG2TargetPlatformDefined()),
-                             __ESIMD_NS::simd<T, N * NElts>>
+__ESIMD_API __ESIMD_NS::simd<T, N * NElts>
 lsc_gather(const T *p, __ESIMD_NS::simd_view<Toffset, RegionTy> offsets,
            __ESIMD_NS::simd_mask<N> pred = 1) {
   return lsc_gather<T, NElts, DS, L1H, L3H, N>(p, offsets.read(), pred);
@@ -762,10 +759,7 @@ template <
     typename T, int NElts = 1, lsc_data_size DS = lsc_data_size::default_size,
     cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none, int N,
     typename Toffset, typename RegionTy = __ESIMD_NS::region1d_t<Toffset, N, 1>>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                                 (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                                  __ESIMD_DNS::isDG2TargetPlatformDefined()),
-                             __ESIMD_NS::simd<T, N * NElts>>
+__ESIMD_API __ESIMD_NS::simd<T, N * NElts>
 lsc_gather(const T *p, __ESIMD_NS::simd_view<Toffset, RegionTy> offsets,
            __ESIMD_NS::simd_mask<N> pred,
            __ESIMD_NS::simd<T, N * NElts> old_values) {
@@ -777,10 +771,7 @@ template <typename T, int NElts = 1,
           lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           int N, typename Toffset>
-__ESIMD_API std::enable_if_t<(!__ESIMD_DNS::isTargetPlatformDefined() ||
-                              (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                               __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-                                 std::is_integral_v<Toffset>,
+__ESIMD_API std::enable_if_t<std::is_integral_v<Toffset>,
                              __ESIMD_NS::simd<T, N * NElts>>
 lsc_gather(const T *p, Toffset offset, __ESIMD_NS::simd_mask<N> pred = 1) {
   return lsc_gather<T, NElts, DS, L1H, L3H, N>(
@@ -791,10 +782,7 @@ template <typename T, int NElts = 1,
           lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           int N, typename Toffset>
-__ESIMD_API std::enable_if_t<(!__ESIMD_DNS::isTargetPlatformDefined() ||
-                              (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                               __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-                                 std::is_integral_v<Toffset>,
+__ESIMD_API std::enable_if_t<std::is_integral_v<Toffset>,
                              __ESIMD_NS::simd<T, N * NElts>>
 lsc_gather(const T *p, Toffset offset, __ESIMD_NS::simd_mask<N> pred,
            __ESIMD_NS::simd<T, N * NElts> old_values) {
@@ -1065,10 +1053,7 @@ lsc_block_load(const T *p, __ESIMD_NS::simd_mask<1> pred = 1,
 template <typename T, int NElts, lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           typename FlagsT = __ESIMD_DNS::dqword_element_aligned_tag>
-__ESIMD_API std::enable_if_t<(!__ESIMD_DNS::isTargetPlatformDefined() ||
-                              (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                               __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-                                 __ESIMD_NS::is_simd_flag_type_v<FlagsT>,
+__ESIMD_API std::enable_if_t<__ESIMD_NS::is_simd_flag_type_v<FlagsT>,
                              __ESIMD_NS::simd<T, NElts>>
 lsc_block_load(const T *p, FlagsT flags) {
   return lsc_block_load<T, NElts, DS, L1H, L3H>(p, __ESIMD_NS::simd_mask<1>(1),
@@ -1337,10 +1322,7 @@ template <typename T, int NElts, lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           typename AccessorTy,
           typename FlagsT = __ESIMD_DNS::dqword_element_aligned_tag>
-__ESIMD_API std::enable_if_t<(!__ESIMD_DNS::isTargetPlatformDefined() ||
-                              (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                               __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-                                 !std::is_pointer<AccessorTy>::value &&
+__ESIMD_API std::enable_if_t<!std::is_pointer<AccessorTy>::value &&
                                  __ESIMD_NS::is_simd_flag_type_v<FlagsT>,
                              __ESIMD_NS::simd<T, NElts>>
 lsc_block_load(AccessorTy acc, uint32_t offset, FlagsT flags) {
@@ -1482,9 +1464,9 @@ template <typename T, int NElts = 1,
           lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           int N, typename Toffset>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                            __ESIMD_DNS::isDG2TargetPlatformDefined())>
 lsc_prefetch(const T *p, __ESIMD_NS::simd<Toffset, N> offsets,
              __ESIMD_NS::simd_mask<N> pred = 1) {
   static_assert(std::is_integral_v<Toffset>, "Unsupported offset type");
@@ -1513,11 +1495,9 @@ template <
     typename T, int NElts = 1, lsc_data_size DS = lsc_data_size::default_size,
     cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none, int N,
     typename Toffset, typename RegionTy = __ESIMD_NS::region1d_t<Toffset, N, 1>>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
-lsc_prefetch(const T *p, __ESIMD_NS::simd_view<Toffset, RegionTy> offsets,
-             __ESIMD_NS::simd_mask<N> pred = 1) {
+__ESIMD_API void lsc_prefetch(const T *p,
+                              __ESIMD_NS::simd_view<Toffset, RegionTy> offsets,
+                              __ESIMD_NS::simd_mask<N> pred = 1) {
   lsc_prefetch<T, NElts, DS, L1H, L3H, N>(p, offsets.read(), pred);
 }
 
@@ -1525,10 +1505,7 @@ template <typename T, int NElts = 1,
           lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           int N, typename Toffset>
-__ESIMD_API std::enable_if_t<(!__ESIMD_DNS::isTargetPlatformDefined() ||
-                              (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                               __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-                             std::is_integral_v<Toffset>>
+__ESIMD_API std::enable_if_t<std::is_integral_v<Toffset>>
 lsc_prefetch(const T *p, Toffset offset, __ESIMD_NS::simd_mask<N> pred = 1) {
   lsc_prefetch<T, NElts, DS, L1H, L3H, N>(
       p, __ESIMD_NS::simd<Toffset, N>(offset), pred);
@@ -1550,9 +1527,9 @@ lsc_prefetch(const T *p, Toffset offset, __ESIMD_NS::simd_mask<N> pred = 1) {
 template <typename T, int NElts = 1,
           lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                            __ESIMD_DNS::isDG2TargetPlatformDefined())>
 lsc_prefetch(const T *p) {
   detail::check_lsc_vector_size<NElts>();
   detail::check_lsc_data_size<T, DS>();
@@ -1698,9 +1675,9 @@ lsc_prefetch(AccessorTy acc, uint32_t offset) {
 ///
 template <typename T, int NElts = 1,
           lsc_data_size DS = lsc_data_size::default_size, int N>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                            __ESIMD_DNS::isDG2TargetPlatformDefined())>
 lsc_slm_scatter(__ESIMD_NS::simd<uint32_t, N> offsets,
                 __ESIMD_NS::simd<T, N * NElts> vals,
                 __ESIMD_NS::simd_mask<N> pred = 1) {
@@ -1737,9 +1714,9 @@ lsc_slm_scatter(__ESIMD_NS::simd<uint32_t, N> offsets,
 /// @param vals is values to store.
 ///
 template <typename T, int NElts, lsc_data_size DS = lsc_data_size::default_size>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                            __ESIMD_DNS::isDG2TargetPlatformDefined())>
 lsc_slm_block_store(uint32_t offset, __ESIMD_NS::simd<T, NElts> vals) {
   detail::check_lsc_vector_size<NElts>();
   detail::check_lsc_data_size<T, DS>();
@@ -1783,9 +1760,9 @@ template <typename T, int NElts = 1,
           lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           int N, typename Toffset>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                            __ESIMD_DNS::isDG2TargetPlatformDefined())>
 lsc_scatter(T *p, __ESIMD_NS::simd<Toffset, N> offsets,
             __ESIMD_NS::simd<T, N * NElts> vals,
             __ESIMD_NS::simd_mask<N> pred = 1) {
@@ -1817,12 +1794,10 @@ template <
     typename T, int NElts = 1, lsc_data_size DS = lsc_data_size::default_size,
     cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none, int N,
     typename Toffset, typename RegionTy = __ESIMD_NS::region1d_t<Toffset, N, 1>>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
-lsc_scatter(T *p, __ESIMD_NS::simd_view<Toffset, RegionTy> offsets,
-            __ESIMD_NS::simd<T, N * NElts> vals,
-            __ESIMD_NS::simd_mask<N> pred = 1) {
+__ESIMD_API void lsc_scatter(T *p,
+                             __ESIMD_NS::simd_view<Toffset, RegionTy> offsets,
+                             __ESIMD_NS::simd<T, N * NElts> vals,
+                             __ESIMD_NS::simd_mask<N> pred = 1) {
   lsc_scatter<T, NElts, DS, L1H, L3H, N>(p, offsets.read(), vals, pred);
 }
 
@@ -1830,10 +1805,7 @@ template <typename T, int NElts = 1,
           lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           int N, typename Toffset>
-__ESIMD_API std::enable_if_t<(!__ESIMD_DNS::isTargetPlatformDefined() ||
-                              (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                               __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-                             std::is_integral_v<Toffset> && N == 1>
+__ESIMD_API std::enable_if_t<std::is_integral_v<Toffset> && N == 1>
 lsc_scatter(T *p, Toffset offset, __ESIMD_NS::simd<T, N * NElts> vals,
             __ESIMD_NS::simd_mask<N> pred = 1) {
   lsc_scatter<T, NElts, DS, L1H, L3H, N>(
@@ -2028,10 +2000,7 @@ lsc_block_store(T *p, __ESIMD_NS::simd<T, NElts> vals,
 template <typename T, int NElts, lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           typename FlagsT = __ESIMD_DNS::dqword_element_aligned_tag>
-__ESIMD_API std::enable_if_t<(!__ESIMD_DNS::isTargetPlatformDefined() ||
-                              (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                               __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-                             __ESIMD_NS::is_simd_flag_type_v<FlagsT>>
+__ESIMD_API std::enable_if_t<__ESIMD_NS::is_simd_flag_type_v<FlagsT>>
 lsc_block_store(T *p, __ESIMD_NS::simd<T, NElts> vals, FlagsT flags) {
   lsc_block_store<T, NElts, DS, L1H, L3H>(p, vals, __ESIMD_NS::simd_mask<1>(1),
                                           flags);
@@ -2184,10 +2153,7 @@ template <typename T, int NElts, lsc_data_size DS = lsc_data_size::default_size,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           typename AccessorTy,
           typename FlagsT = __ESIMD_DNS::dqword_element_aligned_tag>
-__ESIMD_API std::enable_if_t<(!__ESIMD_DNS::isTargetPlatformDefined() ||
-                              (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                               __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-                             !std::is_pointer<AccessorTy>::value &&
+__ESIMD_API std::enable_if_t<!std::is_pointer<AccessorTy>::value &&
                              __ESIMD_NS::is_simd_flag_type_v<FlagsT>>
 lsc_block_store(AccessorTy acc, uint32_t offset,
                 __ESIMD_NS::simd<T, NElts> vals, FlagsT flags) {
@@ -2373,15 +2339,11 @@ template <typename T, int BlockWidth, int BlockHeight = 1, int NBlocks = 1,
           int N = detail::get_lsc_block_2d_data_size<
               T, NBlocks, BlockHeight, BlockWidth, Transposed, Transformed>()>
 __SYCL_DEPRECATED("use lsc_load_2d()")
-__ESIMD_API
-    std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                         (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                          __ESIMD_DNS::isDG2TargetPlatformDefined()),
-                     __ESIMD_NS::simd<T, N>> lsc_load2d(const T *Ptr,
-                                                        unsigned SurfaceWidth,
-                                                        unsigned SurfaceHeight,
-                                                        unsigned SurfacePitch,
-                                                        int X, int Y) {
+__ESIMD_API __ESIMD_NS::simd<T, N> lsc_load2d(const T *Ptr,
+                                              unsigned SurfaceWidth,
+                                              unsigned SurfaceHeight,
+                                              unsigned SurfacePitch, int X,
+                                              int Y) {
   return lsc_load_2d<T, BlockWidth, BlockHeight, NBlocks, Transposed,
                      Transformed, L1H, L3H>(Ptr, SurfaceWidth, SurfaceHeight,
                                             SurfacePitch, X, Y);
@@ -2413,9 +2375,9 @@ template <typename T, int BlockWidth, int BlockHeight = 1, int NBlocks = 1,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           int N = detail::get_lsc_block_2d_data_size<
               T, NBlocks, BlockHeight, BlockWidth, false, false>()>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                            __ESIMD_DNS::isDG2TargetPlatformDefined())>
 lsc_prefetch_2d(const T *Ptr, unsigned SurfaceWidth, unsigned SurfaceHeight,
                 unsigned SurfacePitch, int X, int Y) {
   detail::check_lsc_cache_hint<detail::lsc_action::prefetch, L1H, L3H>();
@@ -2437,15 +2399,9 @@ template <typename T, int BlockWidth, int BlockHeight = 1, int NBlocks = 1,
           int N = detail::get_lsc_block_2d_data_size<
               T, NBlocks, BlockHeight, BlockWidth, false, false>()>
 __SYCL_DEPRECATED("use lsc_prefetch_2d()")
-__ESIMD_API std::enable_if_t<
-    !__ESIMD_DNS::isTargetPlatformDefined() ||
-    (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-     __ESIMD_DNS::
-         isDG2TargetPlatformDefined())> lsc_prefetch2d(const T *Ptr,
-                                                       unsigned SurfaceWidth,
-                                                       unsigned SurfaceHeight,
-                                                       unsigned SurfacePitch,
-                                                       int X, int Y) {
+__ESIMD_API void lsc_prefetch2d(const T *Ptr, unsigned SurfaceWidth,
+                                unsigned SurfaceHeight, unsigned SurfacePitch,
+                                int X, int Y) {
   lsc_prefetch_2d<T, BlockWidth, BlockHeight, NBlocks, L1H, L3H>(
       Ptr, SurfaceWidth, SurfaceHeight, SurfacePitch, X, Y);
 }
@@ -2477,9 +2433,9 @@ template <typename T, int BlockWidth, int BlockHeight = 1,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           int N = detail::get_lsc_block_2d_data_size<
               T, 1u, BlockHeight, BlockWidth, false, false>()>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                            __ESIMD_DNS::isDG2TargetPlatformDefined())>
 lsc_store_2d(T *Ptr, unsigned SurfaceWidth, unsigned SurfaceHeight,
              unsigned SurfacePitch, int X, int Y, __ESIMD_NS::simd<T, N> Vals) {
   detail::check_lsc_cache_hint<detail::lsc_action::store, L1H, L3H>();
@@ -2516,17 +2472,9 @@ template <typename T, int BlockWidth, int BlockHeight = 1,
           int N = detail::get_lsc_block_2d_data_size<
               T, 1u, BlockHeight, BlockWidth, false, false>()>
 __SYCL_DEPRECATED("use lsc_store_2d()")
-__ESIMD_API std::enable_if_t<
-    !__ESIMD_DNS::isTargetPlatformDefined() ||
-    (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-     __ESIMD_DNS::
-         isDG2TargetPlatformDefined())> lsc_store2d(T *Ptr,
-                                                    unsigned SurfaceWidth,
-                                                    unsigned SurfaceHeight,
-                                                    unsigned SurfacePitch,
-                                                    int X, int Y,
-                                                    __ESIMD_NS::simd<T, N>
-                                                        Vals) {
+__ESIMD_API void lsc_store2d(T *Ptr, unsigned SurfaceWidth,
+                             unsigned SurfaceHeight, unsigned SurfacePitch,
+                             int X, int Y, __ESIMD_NS::simd<T, N> Vals) {
   lsc_store_2d<T, BlockWidth, BlockHeight, L1H, L3H>(
       Ptr, SurfaceWidth, SurfaceHeight, SurfacePitch, X, Y, Vals);
 }
@@ -2851,9 +2799,9 @@ template <typename T, int BlockWidth, int BlockHeight = 1, int NBlocks = 1,
           int N = detail::get_lsc_block_2d_data_size<
               T, NBlocks, BlockHeight, BlockWidth, Transposed, Transformed>()>
 ESIMD_INLINE SYCL_ESIMD_FUNCTION
-    std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                     (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                      __ESIMD_DNS::isDG2TargetPlatformDefined())>
+    std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                   (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                    __ESIMD_DNS::isDG2TargetPlatformDefined())>
     lsc_prefetch_2d(
         config_2d_mem_access<T, BlockWidth, BlockHeight, NBlocks> &payload) {
   detail::check_lsc_cache_hint<detail::lsc_action::prefetch, L1H, L3H>();
@@ -2895,9 +2843,9 @@ template <typename T, int BlockWidth, int BlockHeight = 1, int NBlocks = 1,
           int N = detail::get_lsc_block_2d_data_size<
               T, NBlocks, BlockHeight, BlockWidth, false, false>()>
 ESIMD_INLINE SYCL_ESIMD_FUNCTION
-    std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                     (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                      __ESIMD_DNS::isDG2TargetPlatformDefined())>
+    std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                   (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                    __ESIMD_DNS::isDG2TargetPlatformDefined())>
     lsc_store_2d(
         config_2d_mem_access<T, BlockWidth, BlockHeight, NBlocks> &payload,
         __ESIMD_NS::simd<T, N> Data) {
@@ -3131,10 +3079,7 @@ template <__ESIMD_NS::atomic_op Op, typename T, int N,
           typename Toffset,
           typename RegionTy = __ESIMD_NS::region1d_t<Toffset, N, 1>>
 __ESIMD_API std::enable_if_t<
-    (!__ESIMD_DNS::isTargetPlatformDefined() ||
-     (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-      __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-        __ESIMD_DNS::get_num_args<__ESIMD_DNS::to_lsc_atomic_op<Op>()>() == 0,
+    __ESIMD_DNS::get_num_args<__ESIMD_DNS::to_lsc_atomic_op<Op>()>() == 0,
     __ESIMD_NS::simd<T, N>>
 lsc_atomic_update(T *p, __ESIMD_NS::simd_view<Toffset, RegionTy> offsets,
                   __ESIMD_NS::simd_mask<N> pred = 1) {
@@ -3146,10 +3091,7 @@ template <__ESIMD_NS::atomic_op Op, typename T, int N,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           typename Toffset>
 __ESIMD_API std::enable_if_t<
-    (!__ESIMD_DNS::isTargetPlatformDefined() ||
-     (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-      __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-        std::is_integral_v<Toffset> &&
+    std::is_integral_v<Toffset> &&
         __ESIMD_DNS::get_num_args<__ESIMD_DNS::to_lsc_atomic_op<Op>()>() == 0,
     __ESIMD_NS::simd<T, N>>
 lsc_atomic_update(T *p, Toffset offset, __ESIMD_NS::simd_mask<N> pred = 1) {
@@ -3219,10 +3161,7 @@ template <__ESIMD_NS::atomic_op Op, typename T, int N,
           typename Toffset,
           typename RegionTy = __ESIMD_NS::region1d_t<Toffset, N, 1>>
 __ESIMD_API std::enable_if_t<
-    (!__ESIMD_DNS::isTargetPlatformDefined() ||
-     (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-      __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-        __ESIMD_DNS::get_num_args<__ESIMD_DNS::to_lsc_atomic_op<Op>()>() == 1,
+    __ESIMD_DNS::get_num_args<__ESIMD_DNS::to_lsc_atomic_op<Op>()>() == 1,
     __ESIMD_NS::simd<T, N>>
 lsc_atomic_update(T *p, __ESIMD_NS::simd_view<Toffset, RegionTy> offsets,
                   __ESIMD_NS::simd<T, N> src0,
@@ -3236,10 +3175,7 @@ template <__ESIMD_NS::atomic_op Op, typename T, int N,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           typename Toffset>
 __ESIMD_API std::enable_if_t<
-    (!__ESIMD_DNS::isTargetPlatformDefined() ||
-     (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-      __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-        std::is_integral_v<Toffset> &&
+    std::is_integral_v<Toffset> &&
         __ESIMD_DNS::get_num_args<__ESIMD_DNS::to_lsc_atomic_op<Op>()>() == 1 &&
         ((Op != __ESIMD_NS::atomic_op::store &&
           Op != __ESIMD_NS::atomic_op::xchg) ||
@@ -3315,10 +3251,7 @@ template <__ESIMD_NS::atomic_op Op, typename T, int N,
           typename Toffset,
           typename RegionTy = __ESIMD_NS::region1d_t<Toffset, N, 1>>
 __ESIMD_API std::enable_if_t<
-    (!__ESIMD_DNS::isTargetPlatformDefined() ||
-     (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-      __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-        __ESIMD_DNS::get_num_args<__ESIMD_DNS::to_lsc_atomic_op<Op>()>() == 2,
+    __ESIMD_DNS::get_num_args<__ESIMD_DNS::to_lsc_atomic_op<Op>()>() == 2,
     __ESIMD_NS::simd<T, N>>
 lsc_atomic_update(T *p, __ESIMD_NS::simd_view<Toffset, RegionTy> offsets,
                   __ESIMD_NS::simd<T, N> src0, __ESIMD_NS::simd<T, N> src1,
@@ -3332,10 +3265,7 @@ template <__ESIMD_NS::atomic_op Op, typename T, int N,
           cache_hint L1H = cache_hint::none, cache_hint L3H = cache_hint::none,
           typename Toffset>
 __ESIMD_API std::enable_if_t<
-    (!__ESIMD_DNS::isTargetPlatformDefined() ||
-     (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-      __ESIMD_DNS::isDG2TargetPlatformDefined())) &&
-        std::is_integral_v<Toffset> &&
+    std::is_integral_v<Toffset> &&
         __ESIMD_DNS::get_num_args<__ESIMD_DNS::to_lsc_atomic_op<Op>()>() == 2,
     __ESIMD_NS::simd<T, N>>
 lsc_atomic_update(T *p, Toffset offset, __ESIMD_NS::simd<T, N> src0,
@@ -3545,9 +3475,9 @@ lsc_atomic_update(AccessorTy acc, __ESIMD_NS::simd<Toffset, N> offsets,
 template <lsc_memory_kind Kind = lsc_memory_kind::untyped_global,
           lsc_fence_op FenceOp = lsc_fence_op::none,
           lsc_scope Scope = lsc_scope::group, int N = 16>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
-                              __ESIMD_DNS::isDG2TargetPlatformDefined())>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           (__ESIMD_DNS::isPVCTargetPlatformDefined() ||
+                            __ESIMD_DNS::isDG2TargetPlatformDefined())>
 lsc_fence(__ESIMD_NS::simd_mask<N> pred = 1) {
   static_assert(
       Kind != lsc_memory_kind::shared_local ||

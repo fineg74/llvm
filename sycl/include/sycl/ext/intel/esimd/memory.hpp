@@ -1904,8 +1904,8 @@ media_block_load(AccessorTy acc, unsigned x, unsigned y) {
 /// @param vals is the linearized 2D block data to be written to surface.
 ///
 template <typename T, int m, int N, typename AccessorTy, unsigned plane = 0>
-__ESIMD_API std::enable_if_t<!__ESIMD_DNS::isTargetPlatformDefined() ||
-                             __ESIMD_DNS::isGEN9TargetPlatformDefined()>
+__ESIMD_API std::enable_if<!__ESIMD_DNS::isTargetPlatformDefined() ||
+                           __ESIMD_DNS::isGEN9TargetPlatformDefined()>
 media_block_store(AccessorTy acc, unsigned x, unsigned y, simd<T, m * N> vals) {
   constexpr unsigned Width = N * sizeof(T);
   static_assert(Width * m <= 256u,

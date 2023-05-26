@@ -279,8 +279,11 @@ shr(T1 src0, T2 src1, Sat sat = {}) {
 /// @return vector of rotated elements.
 template <typename T0, typename T1, int SZ>
 __ESIMD_API std::enable_if_t<
-    __ESIMD_NS::detail::is_type<T0, int16_t, uint16_t, int32_t, uint32_t,
-                                int64_t, uint64_t>() &&
+    (!__ESIMD_DNS::isTargetPlatformDefined() ||
+     (!__ESIMD_DNS::isGEN8TargetPlatformDefined() &&
+      !__ESIMD_DNS::isGEN9TargetPlatformDefined())) &&
+        __ESIMD_NS::detail::is_type<T0, int16_t, uint16_t, int32_t, uint32_t,
+                                    int64_t, uint64_t>() &&
         __ESIMD_NS::detail::is_type<T1, int16_t, uint16_t, int32_t, uint32_t,
                                     int64_t, uint64_t>(),
     __ESIMD_NS::simd<T0, SZ>>
@@ -319,10 +322,7 @@ rol(__ESIMD_NS::simd<T1, SZ> src0, U src1) {
 /// @return rotated left value.
 template <typename T0, typename T1, typename T2>
 __ESIMD_API std::enable_if_t<
-    (!__ESIMD_DNS::isTargetPlatformDefined() ||
-     (!__ESIMD_DNS::isGEN8TargetPlatformDefined() &&
-      !__ESIMD_DNS::isGEN9TargetPlatformDefined())) &&
-        __ESIMD_DNS::is_esimd_scalar<T0>::value &&
+    __ESIMD_DNS::is_esimd_scalar<T0>::value &&
         __ESIMD_DNS::is_esimd_scalar<T1>::value &&
         __ESIMD_DNS::is_esimd_scalar<T2>::value &&
         __ESIMD_NS::detail::is_type<T0, int16_t, uint16_t, int32_t, uint32_t,
